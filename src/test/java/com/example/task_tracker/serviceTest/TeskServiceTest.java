@@ -2,6 +2,7 @@ package com.example.task_tracker.serviceTest;
 
 import com.example.task_tracker.Task;
 import com.example.task_tracker.TaskRepository;
+import com.example.task_tracker.controller.TaskPriority;
 import com.example.task_tracker.controller.TaskStutas;
 import com.example.task_tracker.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -63,4 +64,64 @@ class TaskServiceTest {
 
 
     }
+
+    @Test
+    void deleteTest()
+    {
+        Task task = new Task();
+        task.setTitle("Test: delete a task");
+        task.setDescription("Test: delete a task");
+        task.setStatus(TaskStutas.IN_PROGRESS);
+        task.setPriority(TaskPriority.HIGH);
+        Task savedTask = taskRepository.save(task);
+
+        long targetId = savedTask.getId();
+
+        taskService.deleteTask(targetId);
+
+        assertFalse(taskRepository.existsById(targetId));
+
+    }
+
+    @Test
+    void createTaskTest()
+    {
+        Task task = new Task();
+        task.setTitle("Test: delete a task");
+        task.setDescription("Test: delete a task");
+        task.setStatus(TaskStutas.IN_PROGRESS);
+        task.setPriority(TaskPriority.HIGH);
+        Task savedTask = taskRepository.save(task);
+
+        assertEquals(task.getId(), taskService.getTaskById(savedTask.getId()).getId());
+
+    }
+
+
+    @Test
+    void getTaskSortedTest()
+    {
+        taskRepository.deleteAll();
+
+        Task taskA = new Task();
+        taskA.setTitle("First Task");
+        taskA.setDescription("Dummy description A");
+        taskRepository.save(taskA);
+
+        Task taskZ = new Task();
+        taskZ.setTitle("Last Task");
+        taskZ.setDescription("Dummy description Z");
+        taskRepository.save(taskZ);
+
+        List<Task> resultDec = taskService.getTaskSorted("title", "decs");
+        List<Task> resultAsc = taskService.getTaskSorted("title", "asc");
+
+        assertNotNull(resultDec);
+        assertNotNull(resultAsc);
+
+        assertEquals("Last Task", resultDec.get(0).getTitle());
+        assertEquals("First Task", resultAsc.get(0).getTitle());
+    }
+
+
 }
