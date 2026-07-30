@@ -123,5 +123,47 @@ class TaskServiceTest {
         assertEquals("First Task", resultAsc.get(0).getTitle());
     }
 
+    @Test
+    void getAllTaskTest()
+    {
+        taskRepository.deleteAll();
 
+        Task taskA = new Task();
+        taskA.setTitle("First Task");
+        taskA.setDescription("Dummy description A");
+        taskRepository.save(taskA);
+
+        Task taskZ = new Task();
+        taskZ.setTitle("Last Task");
+        taskZ.setDescription("Dummy description Z");
+        taskRepository.save(taskZ);
+
+        List<Task> result = taskService.getAllTasks();
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void getTaskByStatusTest()
+    {
+        Task taskA = new Task();
+        taskA.setTitle("First Task");
+        taskA.setDescription("Dummy description A");
+        taskA.setStatus(TaskStutas.IN_PROGRESS);
+        Task savedTask = taskRepository.save(taskA);
+
+        assertEquals(TaskStutas.IN_PROGRESS, savedTask.getStatus());
+    }
+
+    @Test
+    void searchByTitleTest()
+    {
+        taskRepository.deleteAll();
+        Task taskA = new Task();
+        taskA.setTitle("First Task");
+        taskA.setDescription("Dummy description A");
+        taskRepository.save(taskA);
+
+        assertEquals("First Task", taskService.searchByTitle("First Task").get(0).getTitle());
+    }
 }
